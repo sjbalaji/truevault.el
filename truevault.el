@@ -139,6 +139,18 @@
 		     (switch-to-buffer my-buffer)
 		     (json-reformat-region (point-max) (point-min)))))))
 
+(defun truevault-create-api-key-for-user(user-id)
+  "Create api key for a truevault user"
+  (let ((my-buffer
+	 (concat "*TrueVaultAPI* " (current-time-string)))
+	(url
+	 (concat URL "/v1/users/" user-id "/api_key")))
+    (set-process-sentinel
+     (start-process "curl-process" my-buffer "curl"  "-s"  url "-XPOST" "-u" API_KEY)
+     (lambda (p e) (when (= 0 (process-exit-status p))
+		     (switch-to-buffer my-buffer)
+		     (json-reformat-region (point-max) (point-min)))))))
+
 (defun truevault-login-user(username password account-id)
   "Login a truevault user"
   (let ((my-buffer
